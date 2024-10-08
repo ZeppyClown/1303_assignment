@@ -20,12 +20,16 @@ def read_input_file(file_path: str) -> list[str]:
     """
     # Put your code here
     lines = []
-    f = open(file_path, "r")
-    line = f.readline()
-    while line:
-        line = line.rstrip()
-        lines.append(line)
+    # check if the file path exist
+    try:
+        f = open(file_path, "r")
         line = f.readline()
+        while line:
+            line = line.rstrip()
+            lines.append(line)
+            line = f.readline()
+    except Exception as e:
+        add_error_type(type(e).__name__)
     return lines
 
 
@@ -44,23 +48,43 @@ def clean_data(raw_data: list[str]) -> list[dict]:
     """
     # Put your code here
 
+    # create an empty dictionary to store cleaned data
     data_dict = []
     i = 0
     while i < len(raw_data):
         try:
+
             temp_dict= json.loads(raw_data[i])
-            if isNumber(temp_dict, "head_pose", "pitch") and isNumber(temp_dict, "head_pose", "yaw") and isNumber(temp_dict, "eye_gaze", "pitch") and isNumber(temp_dict, "eye_gaze", "yaw") and isNumber(temp_dict, "emotions", "happy") and isNumber(temp_dict, "emotions", "sad") and isNumber(temp_dict, "emotions", "angry")and isNumber(temp_dict, "emotions", "neutral"):
+            # checks if the value in the dictionary is a number
+            # filter out Non-Numeric values
+            if (isFloat(temp_dict, "head_pose", "pitch") and
+                    isFloat(temp_dict, "head_pose", "yaw") and
+                    isFloat(temp_dict, "eye_gaze", "pitch") and
+                    isFloat(temp_dict, "eye_gaze", "yaw") and
+                    isFloat(temp_dict, "emotions", "happy") and
+                    isFloat(temp_dict, "emotions", "sad") and
+                    isFloat(temp_dict, "emotions", "angry")and
+                    isFloat(temp_dict, "emotions", "neutral")):
                 data_dict.append(temp_dict)
 
         except Exception as error:
+            # catch the exception and add the error type to add_error_type
+            # dynamic approach as it catches every error
             add_error_type(type(error).__name__)
         i += 1
 
+    # returned clean data
     return data_dict
-def isNumber(dict: list[dict],outer: str, inner: str):
-    if isinstance(dict[outer][inner], (int, float)):
+
+# check if the value is a float
+def isFloat(dict: list[dict],outer: str, inner: str):
+    if isinstance(dict[outer][inner], (float)):
+        return True
+    # check if it's a float when converted into float
+    elif float(dict[outer][inner]):
         return True
     else:
+        # if it's not a number we cannot accept and add as a TypeError label
         add_error_type("TypeError")
         return False
 
@@ -118,6 +142,10 @@ def calculate_attention_value(head_pose: dict, eye_gaze: dict, emotions: dict) -
         float: The calculated attention value rounded to two decimal places.
         """
      #Put your code here
+
+     # head movement = get the abs value of (pitch and yaw)
+     # normalized movement is dividing (head movement) by 180 (degrees)
+     # head stability is 1 - (normalized movement)
      head_stability = max(0.0, (1 - (
                  (math.fabs(head_pose["pitch"]) + math.fabs(head_pose["yaw"])) / 180)))
 
