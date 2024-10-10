@@ -57,14 +57,14 @@ def clean_data(raw_data: list[str]) -> list[dict]:
             temp_dict= json.loads(raw_data[i])
             # checks if the value in the dictionary is a number
             # filter out Non-Numeric values
-            if (isFloat(temp_dict, "head_pose", "pitch") and
-                    isFloat(temp_dict, "head_pose", "yaw") and
-                    isFloat(temp_dict, "eye_gaze", "pitch") and
-                    isFloat(temp_dict, "eye_gaze", "yaw") and
-                    isFloat(temp_dict, "emotions", "happy") and
-                    isFloat(temp_dict, "emotions", "sad") and
-                    isFloat(temp_dict, "emotions", "angry")and
-                    isFloat(temp_dict, "emotions", "neutral")):
+            if (is_float(temp_dict, "head_pose", "pitch") and
+                    is_float(temp_dict, "head_pose", "yaw") and
+                    is_float(temp_dict, "eye_gaze", "pitch") and
+                    is_float(temp_dict, "eye_gaze", "yaw") and
+                    is_float(temp_dict, "emotions", "happy") and
+                    is_float(temp_dict, "emotions", "sad") and
+                    is_float(temp_dict, "emotions", "angry")and
+                    is_float(temp_dict, "emotions", "neutral")):
                 data_dict.append(temp_dict)
 
         except Exception as error:
@@ -77,7 +77,7 @@ def clean_data(raw_data: list[str]) -> list[dict]:
     return data_dict
 
 # check if the value is a float
-def isFloat(dict: list[dict],outer: str, inner: str):
+def is_float(dict: list[dict],outer: str, inner: str):
     if isinstance(dict[outer][inner], (float)):
         return True
     # check if it's a float when converted into float
